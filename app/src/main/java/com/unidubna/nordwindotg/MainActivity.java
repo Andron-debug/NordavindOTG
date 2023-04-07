@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(Void... parameter) {
             try {
+                OTGTest.serchIntoSupportedDevices();
                 return OTGTest.searchIntoPhoneDB();
             }
             catch (Exception ex)
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             TextView textView = findViewById(R.id.phoneDB);
             switch (result){
                 case 1:
-                    textView.setText("Согласно PhoneDB.сom OTG поддерживается");
+                    textView.setText("Согласно phonedb.сom OTG поддерживается");
                     textView.setTextColor(resources.getColor(R.color.good));
                 break;
                 case 0:

@@ -30,6 +30,7 @@ public class OTGTest {
      */
     public static int searchIntoPhoneDB() throws IOException {
         try {
+            //Получение модели смартфона
             String PhoneModel = android.os.Build.MODEL;
             Log.e("Model", PhoneModel);
             //Поиск по базе
@@ -45,14 +46,49 @@ public class OTGTest {
             //Загрузка страницы с характеристиками
             Document specificationsPage = Jsoup.connect(PhoneUrl).get();
             Log.e("Name", specificationsPage.title());
-            //<a rel="nofollow" title="Browse devices having USB Services USB Host" href="index.php?m=device&amp;s=query&amp;d=detailed_specs&amp;usb_e=128#result">USB Host</a>
-            Elements OTG = specificationsPage.select("a:containsOwn(USB Host)");
+             Elements OTG = specificationsPage.select("a:containsOwn(USB Host)");
             if (OTG.size() != 0) return 1;
             return -1;
         } catch (IOException e) {
             Log.e("Err", e.getMessage());
             throw e;
         }
+    }
+
+    /**
+     * Проверяет смартфон в базе устройств, с которыми ECG Dongle, ECG Dongle Full, PetNet, уже ранее работал
+     * @return true если смартфон есть в базе поддерживаемых false
+     */
+    public static boolean serchIntoSupportedDevices() throws IOException {
+        //Получение модели смартфона
+        String PhoneModel = android.os.Build.MODEL;
+        Log.e("Model", PhoneModel);
+        Document basePage;
+        //Загрузка базы
+        try {
+            basePage = Jsoup.connect("https://cardio-cloud.ru/service/supportedDevicesList").get();
+        }catch (IOException e) {
+        Log.e("Err", e.getMessage());
+        throw e;
+        }
+            /*
+            Поиск описания в базе
+            Пример:
+            <div class="row">
+                <div class="col s6">
+                    &nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;Crystal Quad Core
+                </div>
+                <div class="col s6">
+                    ECG Dongle, ECG Dongle Full, PetNet
+                </div>
+             </div>
+             */
+        Element desc = basePage.selectFirst(String.format("div.row:contains(%s)", PhoneModel));
+        if (desc == null) return false;//Устройства нет в базе
+        Element Dongle = desc.selectFirst(":containsOwn(ECG Dongle)"); //Поддерживается ECG Dongle, если нет ссылка null
+        Element DongleFull = desc.selectFirst(":containsOwn(ECG Dongle Full)"); //Поддерживается ECG Dongle Full, если нет ссылка null
+        Element PetNet = desc.selectFirst(":containsOwn(PetNet)"); //Поддерживается PetNet, если нет ссылка null
+        return (Dongle != null)||(DongleFull != null)||(PetNet != null);
     }
 
 }
