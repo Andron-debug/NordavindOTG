@@ -6,7 +6,16 @@ import android.os.AsyncTask;
 import android.widget.TextView;
 import android.content.res.Resources;
 
+
+
+import android.widget.ImageView;
+
 import OTGTest.OTGTest;
+
+import androidx.core.content.res.ResourcesCompat;
+
+
+import android.graphics.drawable.Drawable;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,11 +28,16 @@ public class MainActivity extends AppCompatActivity {
         modelTextView.append(" "+android.os.Build.MODEL);
         TextView usbHostTextView = findViewById(R.id.UsbHostText);
         if (OTGTest.usbHostTest(this)){
-            usbHostTextView.setText("UsbHost\nподдерживается");
-            usbHostTextView.setTextColor(resources.getColor(R.color.good));
+            usbHostTextView.setText("Android поддерживает\nUSB OTG");
+
+            ImageView imageView = findViewById(R.id.imageView);
+            imageView.setImageResource(R.drawable.check_mark);
+            //usbHostTextView.setTextColor(resources.getColor(R.color.good));
         }
         else{
-            usbHostTextView.setText("UsbHost\nНЕ поддерживается");
+            usbHostTextView.setText("Android не поддерживает\nUSB OTG");
+            ImageView imageView = findViewById(R.id.imageView);
+            imageView.setImageResource(R.drawable.cross);
             usbHostTextView.setTextColor(resources.getColor(R.color.bad));
         }
         //TODO Повторная проверка
@@ -34,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute(){
             Resources resources = getResources();
-            TextView textView = findViewById(R.id.phoneDB);
-            textView.setText("Проверка по базе phonedb.com...");
-            textView.setTextColor(resources.getColor(R.color.neutral));
+            //TextView textView = findViewById(R.id.phoneDB);
+            //textView.setText("Проверка по базе phonedb.com...");
+            //textView.setTextColor(resources.getColor(R.color.neutral));
         }
         @Override
         protected Integer doInBackground(Void... parameter) {
@@ -54,9 +68,10 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Integer result) {
                     Resources resources = getResources();
             TextView textView = findViewById(R.id.phoneDB);
+            TextView usbHostTextView = findViewById(R.id.UsbHostText);
             switch (result){
                 case 1:
-                    textView.setText("Согласно phonedb.сom OTG поддерживается");
+                    //textView.setText("Согласно phonedb.сom OTG поддерживается");
                     textView.setTextColor(resources.getColor(R.color.good));
                 break;
                 case 0:
@@ -68,8 +83,11 @@ public class MainActivity extends AppCompatActivity {
                     textView.setTextColor(resources.getColor(R.color.bad));
                     break;
                 case -2:
-                    textView.setText("Ошибка подключения к phonedb.сom");
+                    //textView.setText("Ошибка подключения к phonedb.сom");
                     textView.setTextColor(resources.getColor(R.color.neutral));
+                    ImageView imageView = findViewById(R.id.imageView);
+                    imageView.setImageResource(R.drawable.no_wifi);
+                    usbHostTextView.setText("Нет подключения к\nинтернету");
                     break;
             }
         }
