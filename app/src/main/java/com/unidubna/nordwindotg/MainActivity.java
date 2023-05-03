@@ -1,21 +1,14 @@
 package com.unidubna.nordwindotg;
 
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-import android.os.AsyncTask;
-import android.widget.TextView;
 import android.content.res.Resources;
-
-
-
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import OTGTest.OTGTest;
-
-import androidx.core.content.res.ResourcesCompat;
-
-
-import android.graphics.drawable.Drawable;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,61 +26,55 @@ public class MainActivity extends AppCompatActivity {
             ImageView imageView = findViewById(R.id.imageView);
             imageView.setImageResource(R.drawable.check_mark);
             //usbHostTextView.setTextColor(resources.getColor(R.color.good));
-        }
-        else{
+        } else {
             usbHostTextView.setText("Android не поддерживает\nUSB OTG");
             ImageView imageView = findViewById(R.id.imageView);
             imageView.setImageResource(R.drawable.cross);
             usbHostTextView.setTextColor(resources.getColor(R.color.bad));
         }
         //TODO Повторная проверка
-        searchIntoPhoneDB test2 = new searchIntoPhoneDB();
+        DoTest test2 = new DoTest();
         test2.execute();
     }
-    private class searchIntoPhoneDB extends AsyncTask <Void, Void, Integer> {
+
+    /**
+     * Класс DoTest отвечает за тестирование и вывод его результатов в интерфейс
+     */
+    private class DoTest extends AsyncTask<Void, Void, Integer> {
+        //Интерфейс до начала тестирования
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             Resources resources = getResources();
-            //TextView textView = findViewById(R.id.phoneDB);
-            //textView.setText("Проверка по базе phonedb.com...");
-            //textView.setTextColor(resources.getColor(R.color.neutral));
         }
+
+        //Тестирование
         @Override
         protected Integer doInBackground(Void... parameter) {
             try {
-                OTGTest.serchIntoSupportedDevices();
+                if (OTGTest.serchIntoSupportedDevices()) return 1;
                 return OTGTest.searchIntoPhoneDB();
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 return -2;
             }
 
         }
+
+        //Вывод в интерфейс
         @Override
         protected void onPostExecute(Integer result) {
-                    Resources resources = getResources();
-            TextView textView = findViewById(R.id.phoneDB);
-            TextView usbHostTextView = findViewById(R.id.UsbHostText);
-            switch (result){
-                case 1:
-                    //textView.setText("Согласно phonedb.сom OTG поддерживается");
-                    textView.setTextColor(resources.getColor(R.color.good));
-                break;
-                case 0:
-                    textView.setText("Ваше устройство не найдено в базе phonedb.сom");
-                    textView.setTextColor(resources.getColor(R.color.neutral));
+            Resources resources = getResources();
+            switch (result) {
+                case 1: //OTG поддерживается
+
                     break;
-                case -1:
-                    textView.setText("Согласно phonedb.сom OTG НЕ поддерживается");
-                    textView.setTextColor(resources.getColor(R.color.bad));
+                case 0://OTG НЕ поддерживается
+
                     break;
-                case -2:
-                    //textView.setText("Ошибка подключения к phonedb.сom");
-                    textView.setTextColor(resources.getColor(R.color.neutral));
-                    ImageView imageView = findViewById(R.id.imageView);
-                    imageView.setImageResource(R.drawable.no_wifi);
-                    usbHostTextView.setText("Нет подключения к\nинтернету");
+                case -1://Не найден в базах
+
+                    break;
+                case -2://Ошибка
+
                     break;
             }
         }
