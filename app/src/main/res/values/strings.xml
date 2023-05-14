@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">OTG Checker</string>
+    <string name="button_text">Повторить проверку</string>
+    <string name="button_text2">Политика конфиденциальности</string>
 </resources>

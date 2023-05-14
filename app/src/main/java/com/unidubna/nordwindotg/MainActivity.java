@@ -1,80 +1,95 @@
 package com.unidubna.nordwindotg;
 
-import android.content.res.Resources;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.os.AsyncTask;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.content.res.Resources;
+
+
+
+import android.widget.ImageView;
 
 import OTGTest.OTGTest;
 
+import androidx.core.content.res.ResourcesCompat;
+
+
+import android.graphics.drawable.Drawable;
+
 public class MainActivity extends AppCompatActivity {
+    protected Button button1;
+    protected ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        button1 = (Button) findViewById(R.id.button1);
+        button1.setVisibility(View.INVISIBLE);
+        imageView = (ImageView) findViewById(R.id.imageView);
+        imageView.setVisibility(View.INVISIBLE);
         Resources resources = getResources();
         TextView modelTextView = findViewById(R.id.Model);
         modelTextView.append(" "+android.os.Build.MODEL);
-        TextView usbHostTextView = findViewById(R.id.UsbHostText);
-        if (OTGTest.usbHostTest(this)){
-            usbHostTextView.setText("Android поддерживает\nUSB OTG");
 
-            ImageView imageView = findViewById(R.id.imageView);
-            imageView.setImageResource(R.drawable.check_mark);
-            //usbHostTextView.setTextColor(resources.getColor(R.color.good));
-        } else {
-            usbHostTextView.setText("Android не поддерживает\nUSB OTG");
-            ImageView imageView = findViewById(R.id.imageView);
-            imageView.setImageResource(R.drawable.cross);
-            usbHostTextView.setTextColor(resources.getColor(R.color.bad));
-        }
+
+
         //TODO Повторная проверка
-        DoTest test2 = new DoTest();
+        searchIntoPhoneDB test2 = new searchIntoPhoneDB();
         test2.execute();
     }
-
-    /**
-     * Класс DoTest отвечает за тестирование и вывод его результатов в интерфейс
-     */
-    private class DoTest extends AsyncTask<Void, Void, Integer> {
-        //Интерфейс до начала тестирования
+    public void update(View view) {
+        searchIntoPhoneDB test3 = new searchIntoPhoneDB();
+        test3.execute();
+    }
+    private class searchIntoPhoneDB extends AsyncTask <Void, Void, Integer> {
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute(){
             Resources resources = getResources();
+            //TextView textView = findViewById(R.id.phoneDB);
+            //textView.setText("Проверка по базе phonedb.com...");
+            //textView.setTextColor(resources.getColor(R.color.neutral));
         }
-
-        //Тестирование
         @Override
         protected Integer doInBackground(Void... parameter) {
             try {
-                if (OTGTest.serchIntoSupportedDevices()) return 1;
+                OTGTest.serchIntoSupportedDevices();
                 return OTGTest.searchIntoPhoneDB();
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 return -2;
             }
 
         }
-
-        //Вывод в интерфейс
         @Override
         protected void onPostExecute(Integer result) {
-            Resources resources = getResources();
-            switch (result) {
-                case 1: //OTG поддерживается
-
+            TextView usbHostTextView = findViewById(R.id.UsbHostText);
+            imageView.setVisibility(View.VISIBLE);
+            switch (result){
+                case 1:
+                    usbHostTextView.setText("Android поддерживает\nUSB OTG");
+                    imageView.setImageResource(R.drawable.check_mark);
+                    button1.setVisibility(View.INVISIBLE);
+                break;
+                case 0:
+                    usbHostTextView.setText("Ваше устройство не\nнайдено в базе");
+                    imageView.setImageResource(R.drawable.cross);
+                    button1.setVisibility(View.INVISIBLE);
                     break;
-                case 0://OTG НЕ поддерживается
-
+                case -1:
+                    usbHostTextView.setText("Android не поддерживает\nUSB OTG");
+                    imageView.setImageResource(R.drawable.cross);
+                    button1.setVisibility(View.INVISIBLE);
                     break;
-                case -1://Не найден в базах
-
-                    break;
-                case -2://Ошибка
-
+                case -2:
+                    ImageView imageView = findViewById(R.id.imageView);
+                    imageView.setImageResource(R.drawable.no_wifi);
+                    usbHostTextView.setText("Нет подключения к\nинтернету");
+                    button1.setVisibility(View.VISIBLE);
                     break;
             }
         }
