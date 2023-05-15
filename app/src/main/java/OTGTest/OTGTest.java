@@ -1,6 +1,7 @@
 package OTGTest;
-import android.content.pm.PackageManager;
+
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.util.Log;
 
 import org.jsoup.Jsoup;
@@ -57,7 +58,8 @@ public class OTGTest {
 
     /**
      * Проверяет смартфон в базе устройств, с которыми ECG Dongle, ECG Dongle Full, PetNet, уже ранее работал
-     * @return true если смартфон есть в базе поддерживаемых false
+     *
+     * @return true если смартфон есть в базе поддерживаемых, false если нет
      */
     public static boolean serchIntoSupportedDevices() throws IOException {
         //Получение модели смартфона
@@ -71,17 +73,8 @@ public class OTGTest {
         Log.e("Err", e.getMessage());
         throw e;
         }
-            /*
-            Поиск описания в базе
-            Пример:
-            <div class="row">
-                <div class="col s6">
-                    &nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;Crystal Quad Core
-                </div>
-                <div class="col s6">
-                    ECG Dongle, ECG Dongle Full, PetNet
-                </div>
-             </div>
+        /*
+
              */
         Element desc = basePage.selectFirst(String.format("div.row:contains(%s)", PhoneModel));
         if (desc == null) return false;//Устройства нет в базе

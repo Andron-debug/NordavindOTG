@@ -1,23 +1,16 @@
 package com.unidubna.nordwindotg;
 
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
+import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
-import android.content.res.Resources;
-
-
-
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import OTGTest.OTGTest;
-
-import androidx.core.content.res.ResourcesCompat;
-
-
-import android.graphics.drawable.Drawable;
 
 public class MainActivity extends AppCompatActivity {
     protected Button button1;
@@ -33,30 +26,33 @@ public class MainActivity extends AppCompatActivity {
         imageView.setVisibility(View.INVISIBLE);
         Resources resources = getResources();
         TextView modelTextView = findViewById(R.id.Model);
-        modelTextView.append(" "+android.os.Build.MODEL);
-
-
+        modelTextView.append(" " + android.os.Build.MODEL);
 
         //TODO Повторная проверка
-        searchIntoPhoneDB test2 = new searchIntoPhoneDB();
-        test2.execute();
+        DoTest test = new DoTest();
+        test.execute();
     }
+
     public void update(View view) {
-        searchIntoPhoneDB test3 = new searchIntoPhoneDB();
-        test3.execute();
+        DoTest test = new DoTest();
+        test.execute();
     }
-    private class searchIntoPhoneDB extends AsyncTask <Void, Void, Integer> {
+
+    /**
+     * Класс DoTest отвечает за тестирование и вывод его результатов в интерфейс
+     */
+    private class DoTest extends AsyncTask<Void, Void, Integer> {
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             Resources resources = getResources();
-            //TextView textView = findViewById(R.id.phoneDB);
-            //textView.setText("Проверка по базе phonedb.com...");
-            //textView.setTextColor(resources.getColor(R.color.neutral));
+            //TODO Во проверки не должен быть белый экран
+
         }
+
         @Override
         protected Integer doInBackground(Void... parameter) {
             try {
-                OTGTest.serchIntoSupportedDevices();
+                if (OTGTest.serchIntoSupportedDevices()) return 1;
                 return OTGTest.searchIntoPhoneDB();
             }
             catch (Exception ex)
