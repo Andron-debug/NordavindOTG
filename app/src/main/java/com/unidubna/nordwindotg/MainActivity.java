@@ -27,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
         Resources resources = getResources();
         TextView modelTextView = findViewById(R.id.Model);
         modelTextView.append(" " + android.os.Build.MODEL);
-
-        //TODO Повторная проверка
         DoTest test = new DoTest();
         test.execute();
     }
@@ -45,8 +43,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             Resources resources = getResources();
-            //TODO Во проверки не должен быть белый экран
-
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageResource(R.drawable.wait);
+            TextView usbHostTextView = findViewById(R.id.UsbHostText);
+            usbHostTextView.setText("Идет проверка...");
         }
 
         @Override
