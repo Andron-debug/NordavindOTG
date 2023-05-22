@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         button1 = (Button) findViewById(R.id.button1);
         button1.setVisibility(View.INVISIBLE);
         imageView = (ImageView) findViewById(R.id.imageView);
-        imageView.setVisibility(View.INVISIBLE);
+        imageView.setImageResource(R.drawable.loading);
         Resources resources = getResources();
         TextView modelTextView = findViewById(R.id.Model);
         modelTextView.append(" " + android.os.Build.MODEL);
@@ -32,8 +32,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void update(View view) {
+
         DoTest test = new DoTest();
         test.execute();
+        imageView.setImageResource(R.drawable.loading);
     }
 
     /**
