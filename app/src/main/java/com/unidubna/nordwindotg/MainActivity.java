@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
 
         DoTest test = new DoTest();
         test.execute();
-        imageView.setImageResource(R.drawable.loading);
     }
 
     /**
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             Resources resources = getResources();
             imageView.setVisibility(View.VISIBLE);
-            imageView.setImageResource(R.drawable.wait);
+            imageView.setImageResource(R.drawable.loading);
             TextView usbHostTextView = findViewById(R.id.UsbHostText);
             usbHostTextView.setText("Идет проверка...");
         }
